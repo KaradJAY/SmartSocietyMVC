@@ -1,0 +1,79 @@
+@{
+    ViewData["Title"] = "Society Information";
+}
+
+<div class="p-6 md:p-10 space-y-8 animate-fade-in pb-24">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-800">Society Showcase</h1>
+            <p class="text-slate-500">Overview of our community and facilities.</p>
+        </div>
+        <button class="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition">
+            <i data-lucide="edit-3" class="w-[18px] h-[18px]"></i> Edit Details
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Info Card -->
+        <div class="lg:col-span-2 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl"></div>
+
+            <h2 class="text-4xl font-extrabold mb-4">Sunshine Galaxy</h2>
+            <div class="space-y-4 text-blue-100">
+                <div class="flex items-start gap-3">
+                    <i data-lucide="map-pin" class="mt-1 flex-shrink-0 w-5 h-5"></i>
+                    <p class="text-lg leading-relaxed">123 Galaxy View Road, Tech Park, Metropolis - 400010</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <i data-lucide="phone" class="w-5 h-5"></i>
+                    <p class="text-lg font-medium">+91 98765 43210</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Amenities Card -->
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+            <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <i data-lucide="building" class="text-rose-500 w-6 h-6"></i> Amenities
+            </h3>
+
+            <div class="flex flex-wrap gap-3">
+                <span class="px-4 py-2 bg-rose-50 text-rose-600 rounded-full text-sm font-semibold flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Swimming Pool
+                </span>
+                <span class="px-4 py-2 bg-rose-50 text-rose-600 rounded-full text-sm font-semibold flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Gymnasium
+                </span>
+                <span class="px-4 py-2 bg-rose-50 text-rose-600 rounded-full text-sm font-semibold flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Kids Play Area
+                </span>
+                <span class="px-4 py-2 bg-rose-50 text-rose-600 rounded-full text-sm font-semibold flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Club House
+                </span>
+                <span class="px-4 py-2 bg-rose-50 text-rose-600 rounded-full text-sm font-semibold flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> 24/7 Security
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery Section -->
+    <div class="mt-12">
+        <h3 class="text-2xl font-bold text-slate-800 mb-6">Society Gallery</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div class="relative group rounded-xl overflow-hidden shadow-md aspect-video bg-slate-200">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=400" alt="Gallery image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+            </div>
+            <div class="relative group rounded-xl overflow-hidden shadow-md aspect-video bg-slate-200">
+                <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=400" alt="Gallery image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+            </div>
+            <div class="relative group rounded-xl overflow-hidden shadow-md aspect-video bg-slate-200">
+                <img src="https://images.unsplash.com/photo-1574362848149-11496d93a7c7?auto=format&fit=crop&w=400" alt="Gallery image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+            </div>
+            <div class="relative group rounded-xl overflow-hidden shadow-md aspect-video bg-slate-200 flex items-center justify-center text-slate-400 font-medium">
+                Image Placeholder
+            </div>
+        </div>
+    </div>
+</div>

@@ -47,7 +47,7 @@ namespace SmartSocietyMVC.Controllers
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role),
-                new Claim("SocietyId", user.SocietyId?.ToString() ?? ""),
+                new Claim("SocietyId", user.SocietyId.ToString()),
             };
 
             var identity = new ClaimsIdentity(claims, "Cookies");
