@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -10,6 +10,9 @@
             <span>SmartSociety</span>
         </a>
         <div class="flex gap-4 items-center">
+            <a href="/Home/Gallery" class="hidden sm:inline-block px-5 py-2.5 font-semibold text-slate-600 hover:text-blue-600 transition-colors">
+                Gallery
+            </a>
             <a href="/Account/Login"
                class="px-5 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-full hover:bg-slate-800 transition-all shadow-lg shadow-slate-200">
                 Access Portal
@@ -48,7 +51,7 @@
         <div class="max-w-6xl mx-auto px-6">
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-slate-900 mb-3">Core Features</h2>
-                <p class="text-slate-500">Essential tools designed for modern residents.</p>
+                <p class="text-slate-500 max-w-2xl mx-auto block">Essential tools designed for modern residents. Manage your entire community life from a single dashboard with our state-of-the-art platform.</p>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8 text-left">
@@ -78,7 +81,7 @@
                 <span class="text-slate-900 font-bold">SmartSociety © 2026</span>
             </div>
             <div class="flex gap-6">
-                <a href="#" class="hover:text-blue-600 transition-colors">Privacy</a>
+                <a href="/Home/Privacy" class="hover:text-blue-600 transition-colors">Privacy</a>
                 <a href="#" class="hover:text-blue-600 transition-colors">Terms</a>
                 <a href="#" class="hover:text-blue-600 transition-colors">Contact</a>
             </div>
