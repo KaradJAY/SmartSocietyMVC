@@ -17,6 +17,10 @@ namespace SmartSocietyMVC.Models
 
         public int? Capacity { get; set; }
 
+        public string Status { get; set; } = "Available"; // Available, Maintenance, Closed
+
+        public string? OperatingHours { get; set; }
+
         [Column(TypeName = "decimal(18,2)")]
         public decimal PricePerDay { get; set; } = 0.00m;
 

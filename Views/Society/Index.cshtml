@@ -1,5 +1,8 @@
+@model SmartSocietyMVC.Models.Society
 @{
     ViewData["Title"] = "Society Information";
+    ViewData["ActiveTab"] = "society";
+    var isAdmin = User.IsInRole("admin");
 }
 
 <div class="p-6 md:p-10 space-y-8 animate-fade-in pb-24">
@@ -8,9 +11,12 @@
             <h1 class="text-3xl font-bold text-slate-800">Society Showcase</h1>
             <p class="text-slate-500">Overview of our community and facilities.</p>
         </div>
-        <button class="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition">
-            <i data-lucide="edit-3" class="w-[18px] h-[18px]"></i> Edit Details
-        </button>
+        @if (isAdmin)
+        {
+            <button onclick="document.getElementById('editSocietyModal').classList.remove('hidden')" class="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition">
+                <i data-lucide="edit-3" class="w-[18px] h-[18px]"></i> Edit Details
+            </button>
+        }
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -18,15 +24,15 @@
         <div class="lg:col-span-2 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
             <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl"></div>
 
-            <h2 class="text-4xl font-extrabold mb-4">Sunshine Galaxy</h2>
+            <h2 class="text-4xl font-extrabold mb-4">@Model?.Name</h2>
             <div class="space-y-4 text-blue-100">
                 <div class="flex items-start gap-3">
                     <i data-lucide="map-pin" class="mt-1 flex-shrink-0 w-5 h-5"></i>
-                    <p class="text-lg leading-relaxed">123 Galaxy View Road, Tech Park, Metropolis - 400010</p>
+                    <p class="text-lg leading-relaxed">@Model?.Address</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <i data-lucide="phone" class="w-5 h-5"></i>
-                    <p class="text-lg font-medium">+91 98765 43210</p>
+                    <p class="text-lg font-medium">@Model?.ContactNumber</p>
                 </div>
             </div>
         </div>
@@ -37,22 +43,16 @@
                 <i data-lucide="building" class="text-rose-500 w-6 h-6"></i> Amenities
             </h3>
 
+            @{
+                var facilityNames = ViewBag.FacilityNames as List<string> ?? new List<string> { "Swimming Pool", "Gymnasium", "Club House", "24/7 Security" };
+            }
             <div class="flex flex-wrap gap-3">
-                <span class="px-4 py-2 bg-rose-50 text-rose-600 rounded-full text-sm font-semibold flex items-center gap-2">
-                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Swimming Pool
-                </span>
-                <span class="px-4 py-2 bg-rose-50 text-rose-600 rounded-full text-sm font-semibold flex items-center gap-2">
-                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Gymnasium
-                </span>
-                <span class="px-4 py-2 bg-rose-50 text-rose-600 rounded-full text-sm font-semibold flex items-center gap-2">
-                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Kids Play Area
-                </span>
-                <span class="px-4 py-2 bg-rose-50 text-rose-600 rounded-full text-sm font-semibold flex items-center gap-2">
-                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Club House
-                </span>
-                <span class="px-4 py-2 bg-rose-50 text-rose-600 rounded-full text-sm font-semibold flex items-center gap-2">
-                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> 24/7 Security
-                </span>
+                @foreach (var amenity in facilityNames)
+                {
+                    <span class="px-4 py-2 bg-rose-50 text-rose-600 rounded-full text-sm font-semibold flex items-center gap-2">
+                        <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> @amenity
+                    </span>
+                }
             </div>
         </div>
     </div>
@@ -77,3 +77,30 @@
         </div>
     </div>
 </div>
+
+@if (isAdmin)
+{
+    <div id="editSocietyModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 shadow-xl w-full max-w-md relative">
+            <button onclick="document.getElementById('editSocietyModal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h2 class="text-xl font-bold mb-6 text-slate-800">Edit Society Details</h2>
+            <form asp-controller="Society" asp-action="Update" method="post" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-500 mb-1">Society Name</label>
+                    <input type="text" name="name" value="@Model?.Name" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-500 mb-1">Address</label>
+                    <textarea name="address" rows="2" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">@Model?.Address</textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-500 mb-1">Contact Number</label>
+                    <input type="text" name="contactNumber" value="@Model?.ContactNumber" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">Save Changes</button>
+            </form>
+        </div>
+    </div>
+}
