@@ -4,9 +4,6 @@ using SmartSocietyMVC.Data;
 using System.Security.Claims;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
-using Microsoft.AspNetCore.Mvc;
-using SmartSocietyMVC.Data;
-using System.Security.Claims;
 
 namespace SmartSocietyMVC.Controllers
 {
