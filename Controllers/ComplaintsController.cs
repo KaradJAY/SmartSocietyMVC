@@ -4,6 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using SmartSocietyMVC.Data;
 using SmartSocietyMVC.Models;
 using System.Security.Claims;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SmartSocietyMVC.Data;
+using SmartSocietyMVC.Models;
+using System.Security.Claims;
 
 namespace SmartSocietyMVC.Controllers
 {
@@ -12,11 +19,13 @@ namespace SmartSocietyMVC.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _env;
+        private readonly IConfiguration _config;
 
-        public ComplaintsController(ApplicationDbContext context, IWebHostEnvironment env)
+        public ComplaintsController(ApplicationDbContext context, IWebHostEnvironment env, IConfiguration config)
         {
             _context = context;
             _env = env;
+            _config = config;
         }
 
         private int GetUserId()
@@ -82,19 +91,22 @@ namespace SmartSocietyMVC.Controllers
 
             if (ImageFile != null && ImageFile.Length > 0)
             {
-                // Store locally instead of cloudinary for now
-                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
-                Directory.CreateDirectory(uploadsFolder);
-                
-                var uniqueFileName = Guid.NewGuid().ToString() + "_" + ImageFile.FileName;
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                var account = new Account(
+                    _config["Cloudinary:CloudName"],
+                    _config["Cloudinary:ApiKey"],
+                    _config["Cloudinary:ApiSecret"]
+                );
+                var cloudinary = new Cloudinary(account);
 
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                using var stream = ImageFile.OpenReadStream();
+                var uploadParams = new ImageUploadParams()
                 {
-                    await ImageFile.CopyToAsync(fileStream);
-                }
+                    File = new FileDescription(ImageFile.FileName, stream),
+                    Folder = "smartsociety/complaints"
+                };
 
-                complaint.ImageUrl = "/uploads/" + uniqueFileName;
+                var uploadResult = await cloudinary.UploadAsync(uploadParams);
+                complaint.ImageUrl = uploadResult.SecureUrl.ToString();
             }
 
             _context.Add(complaint);

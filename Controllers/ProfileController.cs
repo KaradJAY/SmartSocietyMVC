@@ -2,6 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartSocietyMVC.Data;
 using System.Security.Claims;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Mvc;
+using SmartSocietyMVC.Data;
+using System.Security.Claims;
 
 namespace SmartSocietyMVC.Controllers
 {
@@ -10,11 +15,13 @@ namespace SmartSocietyMVC.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _env;
+        private readonly IConfiguration _config;
 
-        public ProfileController(ApplicationDbContext context, IWebHostEnvironment env)
+        public ProfileController(ApplicationDbContext context, IWebHostEnvironment env, IConfiguration config)
         {
             _context = context;
             _env = env;
+            _config = config;
         }
 
         private int GetUserId()
@@ -47,17 +54,22 @@ namespace SmartSocietyMVC.Controllers
 
             if (profilePicture != null && profilePicture.Length > 0)
             {
-                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "profiles");
-                Directory.CreateDirectory(uploadsFolder);
-                var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(profilePicture.FileName);
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                var account = new Account(
+                    _config["Cloudinary:CloudName"],
+                    _config["Cloudinary:ApiKey"],
+                    _config["Cloudinary:ApiSecret"]
+                );
+                var cloudinary = new Cloudinary(account);
 
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                using var stream = profilePicture.OpenReadStream();
+                var uploadParams = new ImageUploadParams()
                 {
-                    await profilePicture.CopyToAsync(fileStream);
-                }
+                    File = new FileDescription(profilePicture.FileName, stream),
+                    Folder = "smartsociety/profiles"
+                };
 
-                user.ProfilePicture = "/uploads/profiles/" + uniqueFileName;
+                var uploadResult = await cloudinary.UploadAsync(uploadParams);
+                user.ProfilePicture = uploadResult.SecureUrl.ToString();
             }
 
             _context.Users.Update(user);
