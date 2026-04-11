@@ -58,6 +58,27 @@ namespace SmartSocietyMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> Update(int id, string name, string description, int capacity, decimal pricePerDay, string operatingHours, string status)
+        {
+            var facility = await _context.Facilities.FindAsync(id);
+            if (facility != null && facility.SocietyId == GetSocietyId())
+            {
+                facility.Name = name;
+                facility.Description = description;
+                facility.Capacity = capacity;
+                facility.PricePerDay = pricePerDay;
+                facility.OperatingHours = operatingHours;
+                facility.Status = status;
+                
+                _context.Facilities.Update(facility);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Facility updated successfully!";
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
         [HttpPost, ActionName("Delete")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)

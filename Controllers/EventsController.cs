@@ -144,7 +144,7 @@ namespace SmartSocietyMVC.Controllers
         // POST: Admin approves or rejects a booking
         [HttpPost]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateBookingStatus(int id, string status)
+        public async Task<IActionResult> UpdateBookingStatus(int id, string status, string? rejectReason)
         {
             var booking = await _context.Bookings
                 .Include(b => b.Facility)
@@ -153,6 +153,10 @@ namespace SmartSocietyMVC.Controllers
             if (booking != null && booking.Facility?.SocietyId == GetSocietyId())
             {
                 booking.Status = status;
+                if (status == "rejected" && !string.IsNullOrEmpty(rejectReason))
+                {
+                    booking.RejectReason = rejectReason;
+                }
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));

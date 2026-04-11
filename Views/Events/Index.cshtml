@@ -76,7 +76,7 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-500 mb-1">Purpose / Event Name</label>
-                        <input type="text" name="purpose" placeholder="Birthday Party, Meeting..." required
+                        <input type="text" name="purpose" placeholder="e.g. Jay Surani's Birthday Party" required
                             class="w-full p-3 bg-slate-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
 
@@ -118,6 +118,10 @@
                                         {
                                             <p class="text-xs text-slate-400">"@b.Purpose" — @b.Days day(s) • ₹@b.TotalPrice</p>
                                         }
+                                        @if (b.Status == "rejected" && !string.IsNullOrEmpty(b.RejectReason))
+                                        {
+                                            <p class="text-xs text-red-500 font-semibold mt-1">Reason: @b.RejectReason</p>
+                                        }
                                     </div>
                                 </div>
                                 <div class="flex gap-2">
@@ -128,11 +132,7 @@
                                             <input type="hidden" name="status" value="approved" />
                                             <button type="submit" class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-bold hover:bg-green-200">Approve</button>
                                         </form>
-                                        <form asp-controller="Events" asp-action="UpdateBookingStatus" method="post">
-                                            <input type="hidden" name="id" value="@b.Id" />
-                                            <input type="hidden" name="status" value="rejected" />
-                                            <button type="submit" class="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-sm font-bold hover:bg-red-200">Reject</button>
-                                        </form>
+                                        <button type="button" onclick="openRejectModal(@b.Id)" class="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-sm font-bold hover:bg-red-200">Reject</button>
                                     }
                                     else
                                     {
@@ -199,6 +199,10 @@
                                         <h3 class="font-bold text-slate-800">@(b.Facility?.Name ?? "(Deleted Facility)")</h3>
                                         <p class="text-sm text-slate-500">@b.Date.ToString("ddd MMM dd yyyy") • @b.Purpose</p>
                                         <p class="text-xs text-slate-400">@b.Days day(s) • ₹@b.TotalPrice total</p>
+                                        @if (b.Status == "rejected" && !string.IsNullOrEmpty(b.RejectReason))
+                                        {
+                                            <p class="text-xs text-red-500 font-semibold mt-1">Reason: @b.RejectReason</p>
+                                        }
                                     </div>
                                 </div>
                                 <span class="px-4 py-2 rounded-full text-xs font-bold uppercase flex items-center gap-2 @badgeCls">
@@ -247,14 +251,31 @@
             </button>
             <h2 class="text-xl font-bold mb-6 text-slate-800">Add New Event</h2>
             <form asp-controller="Events" asp-action="Create" method="post" class="space-y-4">
-                <input type="text" name="title" placeholder="Event Title" required class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
-                <textarea name="description" rows="2" placeholder="Description" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <input type="text" name="title" placeholder="Event Title (e.g. Jay Surani's Workshop)" required class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
+                <textarea name="description" rows="2" placeholder="Description" required class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                 <div class="grid grid-cols-2 gap-4">
                     <input type="datetime-local" name="eventDate" required class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
-                    <input type="text" name="location" placeholder="Location" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
+                    <input type="text" name="location" placeholder="Location" required class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
                 </div>
-                <input type="text" name="organizer" placeholder="Organizer Name" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
+                <input type="text" name="organizer" placeholder="Jay Surani" required class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
                 <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">Create Event</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reject Booking Modal -->
+    <div id="rejectBookingModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 shadow-xl w-full max-w-md relative">
+            <button onclick="document.getElementById('rejectBookingModal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h2 class="text-xl font-bold mb-2 text-red-600">Reject Booking</h2>
+            <p class="text-slate-500 text-sm mb-6">Please provide a reason for rejecting this booking.</p>
+            <form asp-controller="Events" asp-action="UpdateBookingStatus" method="post" class="space-y-4">
+                <input type="hidden" id="rejectBookingId" name="id" value="" />
+                <input type="hidden" name="status" value="rejected" />
+                <textarea name="rejectReason" rows="3" placeholder="e.g. Facility is under maintenance" required class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                <button type="submit" class="w-full bg-red-600 text-white py-3 rounded-xl font-bold hover:bg-red-700 transition">Confirm Rejection</button>
             </form>
         </div>
     </div>
@@ -269,5 +290,10 @@
         const price = parseFloat(selected?.dataset?.price || 0);
         const priceEl = document.getElementById('estPrice');
         if (priceEl) priceEl.textContent = '₹' + (price * days).toLocaleString();
+    }
+
+    function openRejectModal(id) {
+        document.getElementById('rejectBookingId').value = id;
+        document.getElementById('rejectBookingModal').classList.remove('hidden');
     }
 </script>

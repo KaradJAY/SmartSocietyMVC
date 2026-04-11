@@ -3,6 +3,7 @@
     ViewData["Title"] = "Society Information";
     ViewData["ActiveTab"] = "society";
     var isAdmin = User.IsInRole("admin");
+    var galleryImages = ViewBag.GalleryImages as List<string> ?? new List<string>();
 }
 
 <div class="p-6 md:p-10 space-y-8 animate-fade-in pb-24">
@@ -59,21 +60,53 @@
 
     <!-- Gallery Section -->
     <div class="mt-12">
-        <h3 class="text-2xl font-bold text-slate-800 mb-6">Society Gallery</h3>
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold text-slate-800">Society Gallery</h3>
+            @if (isAdmin)
+            {
+                <form asp-controller="Society" asp-action="AddGalleryImage" method="post" enctype="multipart/form-data" class="flex gap-2">
+                    <label class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition cursor-pointer text-sm font-bold flex items-center gap-2">
+                        <i data-lucide="upload" class="w-4 h-4"></i> Upload Image
+                        <input type="file" name="ImageFile" class="hidden" accept="image/*" onchange="this.form.submit()" />
+                    </label>
+                </form>
+            }
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <div class="relative group rounded-xl overflow-hidden shadow-md aspect-video bg-slate-200">
-                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=400" alt="Gallery image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-            </div>
-            <div class="relative group rounded-xl overflow-hidden shadow-md aspect-video bg-slate-200">
-                <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=400" alt="Gallery image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-            </div>
-            <div class="relative group rounded-xl overflow-hidden shadow-md aspect-video bg-slate-200">
-                <img src="https://images.unsplash.com/photo-1574362848149-11496d93a7c7?auto=format&fit=crop&w=400" alt="Gallery image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-            </div>
-            <div class="relative group rounded-xl overflow-hidden shadow-md aspect-video bg-slate-200 flex items-center justify-center text-slate-400 font-medium">
-                Image Placeholder
-            </div>
+            @if (galleryImages.Any())
+            {
+                foreach (var img in galleryImages)
+                {
+                    <div class="relative rounded-xl overflow-hidden shadow-md aspect-video bg-slate-200 group">
+                        <img src="@img" alt="Gallery image" class="lightbox-trigger cursor-pointer w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                        @if (isAdmin)
+                        {
+                            <form asp-controller="Society" asp-action="DeleteGalleryImage" method="post"
+                                  class="absolute top-2 right-2"
+                                  onsubmit="return confirm('Delete this image from gallery and Cloudinary?')">
+                                <input type="hidden" name="imageUrl" value="@img" />
+                                <button type="submit"
+                                        class="bg-red-600/90 backdrop-blur text-white px-2 py-1 rounded-lg shadow flex items-center gap-1 text-xs font-bold hover:bg-red-700 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6L18.1 20a2 2 0 0 1-2 1.9H7.9a2 2 0 0 1-2-1.9L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                                    Delete
+                                </button>
+                            </form>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-span-4 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center py-14 text-slate-400 gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <p class="text-sm font-medium">No gallery images yet</p>
+                    @if (isAdmin)
+                    {
+                        <p class="text-xs">Click <strong>"Upload Image"</strong> above to add photos.</p>
+                    }
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -98,6 +131,13 @@
                 <div>
                     <label class="block text-sm font-semibold text-slate-500 mb-1">Contact Number</label>
                     <input type="text" name="contactNumber" value="@Model?.ContactNumber" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-500 mb-1">Amenities (comma separated)</label>
+                    @{
+                        var amText = string.Join(", ", ViewBag.FacilityNames as List<string> ?? new List<string>());
+                    }
+                    <textarea name="amenities" rows="2" placeholder="Gym, Pool, Security" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">@amText</textarea>
                 </div>
                 <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">Save Changes</button>
             </form>

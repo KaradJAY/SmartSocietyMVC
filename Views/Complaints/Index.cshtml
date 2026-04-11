@@ -25,10 +25,10 @@
             }
 
             <form asp-controller="Complaints" asp-action="Create" method="post" enctype="multipart/form-data" class="space-y-4">
-                <input type="text" name="Title" placeholder="Issue Title (e.g. Broken Pipe)" required
+                <input type="text" name="Title" placeholder="e.g. Water Leakage in Bathroom" required
                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
                 
-                <textarea name="Description" placeholder="Describe the problem..." required
+                <textarea name="Description" placeholder="Describe the issue in detail..." required
                           class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none h-24"></textarea>
 
                 <label class="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-slate-200 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-slate-50 transition">
@@ -121,7 +121,7 @@
                                 @if (!string.IsNullOrEmpty(c.ImageUrl))
                                 {
                                     <div class="relative">
-                                        <img src="@c.ImageUrl" alt="Complaint evidence" class="w-32 h-32 object-cover rounded-xl border-2 border-slate-200 shadow-md group-hover:scale-105 transition-transform" />
+                                        <img src="@c.ImageUrl" alt="Complaint evidence" class="lightbox-trigger cursor-pointer w-32 h-32 object-cover rounded-xl border-2 border-slate-200 shadow-md transition-transform" />
                                     </div>
                                 }
 

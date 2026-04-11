@@ -35,7 +35,7 @@ namespace SmartSocietyMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            var existingUser = _context.Users.FirstOrDefault(u => u.Email == emailAddress);
+            var existingUser = _context.Users.FirstOrDefault(u => u.Email.ToLower() == emailAddress.ToLower());
             if (existingUser != null)
             {
                 TempData["ErrorMessage"] = "User with this email already exists.";

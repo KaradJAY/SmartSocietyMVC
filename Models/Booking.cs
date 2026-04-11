@@ -27,6 +27,8 @@ namespace SmartSocietyMVC.Models
 
         public string? Purpose { get; set; }
 
+        public string? RejectReason { get; set; }
+
         public int Days { get; set; } = 1;
 
         [Column(TypeName = "decimal(18,2)")]
