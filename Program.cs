@@ -32,17 +32,19 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
     
-    // Ensure database is created/migrated
-    context.Database.Migrate();
+    try
+    {
+        // Ensure database is created/migrated
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("STARTUP MIGRATION FAILED: " + ex.Message);
+    }
 }
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+app.UseDeveloperExceptionPage();
 
 app.UseHttpsRedirection();
 app.UseRouting();
